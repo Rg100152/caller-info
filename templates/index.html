@@ -30,5 +30,63 @@
     <p class="banner-copy">Identify phone numbers instantly with telecom metadata, caller reputation signals, and community-powered reporting.</p>
     <div class="dev-badge">Developed by Raj Gautam</div>
   </section>
+
+  <main class="container">
+    <section class="card scanner-card">
+      <h2>Scan a Number</h2>
+      <p class="muted">Enter a phone number to fetch telecom and caller intelligence.</p>
+      <div class="scanner-row">
+        <select id="region" aria-label="Country code">
+          <option value="IN">+91 IN</option>
+          <option value="US">+1 US</option>
+          <option value="GB">+44 UK</option>
+          <option value="AE">+971 UAE</option>
+        </select>
+        <input id="number" type="text" inputmode="tel" placeholder="Enter phone number" aria-label="Phone number" />
+        <button id="scanBtn" class="btn primary">SCAN</button>
+      </div>
+      <div id="scanError" class="message error" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script>
+    const scanBtn = document.getElementById('scanBtn');
+    const numberInput = document.getElementById('number');
+    const regionInput = document.getElementById('region');
+    const scanError = document.getElementById('scanError');
+
+    async function scanNumber() {
+      scanError.textContent = '';
+      const number = numberInput.value.trim();
+      const region = regionInput.value;
+      if (!number) {
+        scanError.textContent = 'Please enter a phone number.';
+        return;
+      }
+      scanBtn.disabled = true;
+      scanBtn.textContent = 'SCANNING...';
+      try {
+        const res = await fetch('/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ number, region })
+        });
+        const payload = await res.json();
+        if (!res.ok || payload.status !== 'success') {
+          throw new Error(payload.message || 'Scan failed.');
+        }
+        window.__lastScan = payload.data;
+        document.dispatchEvent(new CustomEvent('caller:scanned', { detail: payload.data }));
+      } catch (err) {
+        scanError.textContent = err.message || 'Unable to scan number.';
+      } finally {
+        scanBtn.disabled = false;
+        scanBtn.textContent = 'SCAN';
+      }
+    }
+
+    scanBtn.addEventListener('click', scanNumber);
+    numberInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') scanNumber(); });
+  </script>
 </body>
 </html>
