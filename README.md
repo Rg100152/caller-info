@@ -1,5 +1,10 @@
 # Caller Info
 
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
+![Flask](https://img.shields.io/badge/flask-app-black.svg)
+![Status](https://img.shields.io/badge/status-active-success.svg)
+
 **Caller Info** is an open-source, Python-based web application for real-time telephone number intelligence and telecom metadata lookup. It provides a dark cyber-glassmorphism interface for scanning domestic and international phone numbers.
 
 > Developed by **Raj Gautam** · MIT License
@@ -107,6 +112,13 @@ Success response:
 
 - Carrier data is based on original number allocation and may show `Unknown / Ported` for ported numbers.
 - All database writes use parameterized SQL queries.
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feat/my-change`
+3. Commit your changes.
+4. Push the branch and open a Pull Request.
 
 ## License
 
