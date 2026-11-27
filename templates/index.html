@@ -47,6 +47,24 @@
       </div>
       <div id="scanError" class="message error" role="status" aria-live="polite"></div>
     </section>
+
+    <section id="resultBox" class="card result-box hidden">
+      <div class="result-head">
+        <div>
+          <p class="muted">Caller Identity</p>
+          <h2 id="callerName">Unknown Caller</h2>
+        </div>
+        <span id="callerTag" class="tag">Unverified</span>
+      </div>
+      <div class="grid">
+        <div class="info-card"><span class="label">Formatted Number</span><strong id="rFormatted">-</strong></div>
+        <div class="info-card"><span class="label">Telecom Company</span><strong id="rOperator">-</strong></div>
+        <div class="info-card"><span class="label">Circle/State</span><strong id="rCircle">-</strong></div>
+        <div class="info-card"><span class="label">Line Type</span><strong id="rLine">-</strong></div>
+        <div class="info-card"><span class="label">Time Zone</span><strong id="rTimezone">-</strong></div>
+        <div class="info-card"><span class="label">Spam Reports</span><strong id="rSpam">-</strong></div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -85,6 +103,22 @@
       }
     }
 
+    function renderResult(data) {
+      const box = document.getElementById('resultBox');
+      box.classList.remove('hidden');
+      document.getElementById('callerName').textContent = data.name || 'Unknown Caller';
+      const tag = document.getElementById('callerTag');
+      tag.textContent = data.tag || 'Unverified';
+      tag.classList.toggle('danger', Number(data.spam) > 0 || data.tag === 'Spam Alert');
+      document.getElementById('rFormatted').textContent = data.formatted || '-';
+      document.getElementById('rOperator').textContent = data.operator || '-';
+      document.getElementById('rCircle').textContent = data.circle || '-';
+      document.getElementById('rLine').textContent = data.line || '-';
+      document.getElementById('rTimezone').textContent = data.timezone || '-';
+      document.getElementById('rSpam').textContent = String(data.spam ?? 0);
+    }
+
+    document.addEventListener('caller:scanned', (e) => renderResult(e.detail));
     scanBtn.addEventListener('click', scanNumber);
     numberInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') scanNumber(); });
   </script>
