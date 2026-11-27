@@ -121,6 +121,61 @@ def scan_number():
     )
 
 
+@app.route("/api/update", methods=["POST"])
+def update_caller():
+    payload = request.get_json(silent=True) or {}
+    e164 = str(payload.get("e164", "")).strip()
+    name = str(payload.get("name", "")).strip()
+    is_spam = bool(payload.get("is_spam", False))
+
+    if not e164:
+        return jsonify({"status": "error", "message": "E.164 number is required."}), 400
+
+    try:
+        parsed = phonenumbers.parse(e164, None)
+    except phonenumbers.NumberParseException:
+        return jsonify({"status": "error", "message": "Invalid phone number format."}), 400
+
+    if not phonenumbers.is_valid_number(parsed):
+        return jsonify({"status": "error", "message": "Invalid phone number format."}), 400
+
+    e164 = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
+    spam_increment = 1 if is_spam else 0
+
+    conn = get_db_connection()
+    try:
+        row = conn.execute(
+            "SELECT caller_name, tag, spam_reports FROM caller_records WHERE phone_number = ?",
+            (e164,),
+        ).fetchone()
+        if row:
+            new_name = name or row["caller_name"]
+            new_tag = "Spam Alert" if (row["spam_reports"] + spam_increment) > 0 else (row["tag"] if not name else "Verified User")
+            conn.execute(
+                """
+                UPDATE caller_records
+                SET caller_name = ?, tag = ?, spam_reports = spam_reports + ?
+                WHERE phone_number = ?
+                """,
+                (new_name, new_tag, spam_increment, e164),
+            )
+        else:
+            new_name = name or "Unknown Caller"
+            new_tag = "Spam Alert" if spam_increment > 0 else "Verified User"
+            conn.execute(
+                """
+                INSERT INTO caller_records (phone_number, caller_name, tag, spam_reports)
+                VALUES (?, ?, ?, ?)
+                """,
+                (e164, new_name, new_tag, spam_increment),
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return jsonify({"status": "success", "message": "Caller Info database updated successfully."})
+
+
 init_db()
 
 if __name__ == "__main__":
