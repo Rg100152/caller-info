@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A0F1D"/>
+      <stop offset="100%" stop-color="#121A33"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="1%" stop-color="#7C4DFF"/>
+    </linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="40"/></filter>
+  </defs>
+  <rect width="1280" height="420" fill="url(#bg)"/>
+  <circle cx="1050" cy="80" r="140" fill="#7C4DFF" opacity="0.18" filter="url(#blur)"/>
+  <circle cx="220" cy="340" r="160" fill="#00E5FF" opacity="0.12" filter="url(#blur)"/>
+  <rect x="70" y="70" width="1140" height="280" rx="28" fill="rgba(255,255,255,0.03)" stroke="rgba(0,229,255,0.2)"/>
+  <g transform="translate(120,140)">
+    <rect x="0" y="0" width="96" height="96" rx="28" stroke="url(#accent)" stroke-width="6" fill="#0B1020"/>
+    <path d="M30 26C30 23.7909 31.7909 22 34 22H44C46.2091 22 48 23.7909 48 26V40L58 50V68C58 70.2091 56.2091 72 54 72H40C37.7909 72 36 70.2091 36 68V54L26 44V30C26 27.7909 27.7909 26 30 26Z" fill="url(#accent)"/>
+    <circle cx="64" cy="30" r="6" fill="#00E5FF"/>
+  </g>
+  <text x="250" y="175" font-family="Segoe UI, Arial, sans-serif" font-size="58" font-weight="800" fill="url(#accent)">Caller Info</text>
+  <text x="250" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="#E8F1FF">Open-Source Caller &amp; Telecom Intelligence</text>
+  <text x="250" y="258" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#9FB3D9">Real-time phone scanning • E.164 validation • Crowdsourced reputation</text>
+  <rect x="250" y="285" rx="18" ry="18" width="250" height="36" fill="rgba(255,77,109,0.16)" stroke="rgba(255,77,109,0.45)"/>
+  <text x="375" y="309" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#FF8FA1">Developed by Raj Gautam</text>
+</svg>
