@@ -1,7 +1,9 @@
 import os
 import sqlite3
 
+import phonenumbers
 from flask import Flask, jsonify, render_template, request
+from phonenumbers import PhoneNumberType, carrier, geocoder, timezone
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
@@ -43,6 +45,23 @@ def init_db():
         conn.commit()
     finally:
         conn.close()
+
+
+def get_line_type(number_type):
+    mapping = {
+        PhoneNumberType.MOBILE: "Mobile",
+        PhoneNumberType.FIXED_LINE: "Landline",
+        PhoneNumberType.FIXED_LINE_OR_MOBILE: "Mobile / Landline",
+        PhoneNumberType.VOIP: "VoIP",
+        PhoneNumberType.TOLL_FREE: "Toll-Free",
+        PhoneNumberType.PREMIUM_RATE: "Premium Rate",
+        PhoneNumberType.SHARED_COST: "Shared Cost",
+        PhoneNumberType.PERSONAL_NUMBER: "Personal Number",
+        PhoneNumberType.PAGER: "Pager",
+        PhoneNumberType.UAN: "UAN",
+        PhoneNumberType.VOICEMAIL: "Voicemail",
+    }
+    return mapping.get(number_type, "Unknown")
 
 
 @app.route("/")
