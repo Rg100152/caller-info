@@ -69,6 +69,58 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/api/scan", methods=["POST"])
+def scan_number():
+    payload = request.get_json(silent=True) or {}
+    number = str(payload.get("number", "")).strip()
+    region = str(payload.get("region", "IN")).strip().upper() or "IN"
+
+    if not number:
+        return jsonify({"status": "error", "message": "Phone number is required."}), 400
+
+    try:
+        parsed = phonenumbers.parse(number, region)
+    except phonenumbers.NumberParseException:
+        return jsonify({"status": "error", "message": "Invalid phone number format."}), 400
+
+    if not phonenumbers.is_valid_number(parsed):
+        return jsonify({"status": "error", "message": "Invalid phone number format."}), 400
+
+    e164 = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
+    formatted = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+    operator = carrier.name_for_number(parsed, "en") or "Unknown / Ported"
+    circle = geocoder.description_for_number(parsed, "en") or "Unknown"
+    line = get_line_type(phonenumbers.number_type(parsed))
+    tz = timezone.time_zones_for_number(parsed)
+    tz_value = ", ".join(tz) if tz else "Unknown"
+
+    conn = get_db_connection()
+    try:
+        row = conn.execute(
+            "SELECT caller_name, tag, spam_reports FROM caller_records WHERE phone_number = ?",
+            (e164,),
+        ).fetchone()
+    finally:
+        conn.close()
+
+    return jsonify(
+        {
+            "status": "success",
+            "data": {
+                "e164": e164,
+                "formatted": formatted,
+                "name": row["caller_name"] if row else "Unknown Caller",
+                "tag": row["tag"] if row else "Unverified",
+                "spam": row["spam_reports"] if row else 0,
+                "operator": operator,
+                "circle": circle,
+                "line": line,
+                "timezone": tz_value,
+            },
+        }
+    )
+
+
 init_db()
 
 if __name__ == "__main__":
