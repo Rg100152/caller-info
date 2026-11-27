@@ -65,6 +65,17 @@
         <div class="info-card"><span class="label">Spam Reports</span><strong id="rSpam">-</strong></div>
       </div>
     </section>
+
+    <section class="card update-section">
+      <h2>Contribute Caller Info</h2>
+      <p class="muted">Help improve the directory by submitting a name or reporting spam.</p>
+      <div class="update-row">
+        <input id="updateName" type="text" placeholder="Caller name (optional)" aria-label="Caller name" />
+        <label class="check"><input id="isSpam" type="checkbox" /> Report Spam</label>
+        <button id="saveBtn" class="btn">Save Info</button>
+      </div>
+      <div id="updateMsg" class="message" role="status" aria-live="polite"></div>
+    </section>
   </main>
 
   <script>
@@ -118,7 +129,45 @@
       document.getElementById('rSpam').textContent = String(data.spam ?? 0);
     }
 
+    async function saveInfo() {
+      const msg = document.getElementById('updateMsg');
+      msg.textContent = '';
+      msg.className = 'message';
+      const last = window.__lastScan;
+      if (!last || !last.e164) {
+        msg.textContent = 'Scan a number first.';
+        msg.classList.add('error');
+        return;
+      }
+      const name = document.getElementById('updateName').value.trim();
+      const is_spam = document.getElementById('isSpam').checked;
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'SAVING...';
+      try {
+        const res = await fetch('/api/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ e164: last.e164, name, is_spam })
+        });
+        const payload = await res.json();
+        if (!res.ok || payload.status !== 'success') {
+          throw new Error(payload.message || 'Update failed.');
+        }
+        msg.textContent = payload.message;
+        msg.classList.add('success');
+        await scanNumber();
+      } catch (err) {
+        msg.textContent = err.message || 'Unable to update record.';
+        msg.classList.add('error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Info';
+      }
+    }
+
     document.addEventListener('caller:scanned', (e) => renderResult(e.detail));
+    document.getElementById('saveBtn').addEventListener('click', saveInfo);
     scanBtn.addEventListener('click', scanNumber);
     numberInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') scanNumber(); });
   </script>
