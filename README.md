@@ -1,10 +1,25 @@
-# Caller Info
+<p align="center">
+  <img src="assets/logo.svg" alt="Caller Info Logo" width="110" />
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-Embedded-003B57?logo=sqlite&logoColor=white)](https://sqlite.org/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+<h1 align="center">Caller Info</h1>
+
+<p align="center">
+  <strong>Open-source caller & telecom intelligence web application</strong><br/>
+  Real-time phone scanning • E.164 validation • Crowdsourced reputation
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e.svg" alt="License: MIT"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white" alt="Python"></a>
+  <a href="https://flask.palletsprojects.com/"><img src="https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white" alt="Flask"></a>
+  <a href="https://sqlite.org/"><img src="https://img.shields.io/badge/SQLite-Embedded-003B57?logo=sqlite&logoColor=white" alt="SQLite"></a>
+  <a href="#contributing"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+</p>
+
+<p align="center">
+  <img src="assets/banner.svg" alt="Caller Info Banner" width="100%" />
+</p>
 
 **Caller Info** is an open-source, Python-powered web application for real-time telephone number intelligence. It combines offline telecom metadata resolution with a lightweight crowdsourced caller directory, delivered through a modern dark cyber-glassmorphism interface.
 
@@ -15,6 +30,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Screenshot](#screenshot)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
@@ -38,6 +54,14 @@ The project is designed to be:
 - **Lightweight** — No external database server or paid API required.
 - **Portable** — Runs on Linux, Windows, and macOS with Python 3.9+.
 - **Extensible** — Clean separation of UI, API routing, metadata extraction, and persistence.
+
+---
+
+## Screenshot
+
+<p align="center">
+  <img src="assets/screenshot.png" alt="Caller Info Web App Screenshot" width="100%" />
+</p>
 
 ---
 
