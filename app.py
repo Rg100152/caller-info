@@ -11,6 +11,21 @@ DB_PATH = os.path.join(BASE_DIR, "database.db")
 app = Flask(__name__)
 
 
+@app.errorhandler(404)
+def not_found(_error):
+    return jsonify({"status": "error", "message": "Resource not found."}), 404
+
+
+@app.errorhandler(405)
+def method_not_allowed(_error):
+    return jsonify({"status": "error", "message": "Method not allowed."}), 405
+
+
+@app.errorhandler(500)
+def internal_error(_error):
+    return jsonify({"status": "error", "message": "Internal server error."}), 500
+
+
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
