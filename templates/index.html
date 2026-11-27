@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caller Info — Caller & Telecom Scanner</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Caller Info logo">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#00E5FF"/>
+            <stop offset="1" stop-color="#7C4DFF"/>
+          </linearGradient>
+        </defs>
+        <rect x="6" y="6" width="52" height="52" rx="16" stroke="url(#g1)" stroke-width="4"/>
+        <path d="M22 20C22 18.8954 22.8954 18 24 18H30C31.1046 18 32 18.8954 32 20V28L38 34V44C38 45.1046 37.1046 46 36 46H28C26.8954 46 26 45.1046 26 44V36L20 30V22C20 20.8954 20.8954 20 22 20Z" fill="url(#g1)" opacity="0.9"/>
+        <circle cx="42" cy="22" r="4" fill="#00E5FF"/>
+      </svg>
+      <span class="brand-title">Caller Info</span>
+    </div>
+    <div class="status-pill">OPEN SOURCE • HTTP</div>
+  </header>
+
+  <section class="banner">
+    <p class="eyebrow">Open-source caller intelligence</p>
+    <h1>Caller Info — Caller &amp; Telecom Scanner</h1>
+    <p class="banner-copy">Identify phone numbers instantly with telecom metadata, caller reputation signals, and community-powered reporting.</p>
+    <div class="dev-badge">Developed by Raj Gautam</div>
+  </section>
+
+  <main class="container">
+    <section class="card scanner-card">
+      <h2>Scan a Number</h2>
+      <p class="muted">Enter a phone number to fetch telecom and caller intelligence.</p>
+      <div class="scanner-row">
+        <select id="region" aria-label="Country code">
+          <option value="IN">+91 IN</option>
+          <option value="US">+1 US</option>
+          <option value="GB">+44 UK</option>
+          <option value="AE">+971 UAE</option>
+        </select>
+        <input id="number" type="text" inputmode="tel" placeholder="Enter phone number" aria-label="Phone number" />
+        <button id="scanBtn" class="btn primary">SCAN</button>
+      </div>
+      <div id="scanError" class="message error" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script>
+    const scanBtn = document.getElementById('scanBtn');
+    const numberInput = document.getElementById('number');
+    const regionInput = document.getElementById('region');
+    const scanError = document.getElementById('scanError');
+
+    async function scanNumber() {
+      scanError.textContent = '';
+      const number = numberInput.value.trim();
+      const region = regionInput.value;
+      if (!number) {
+        scanError.textContent = 'Please enter a phone number.';
+        return;
+      }
+      scanBtn.disabled = true;
+      scanBtn.textContent = 'SCANNING...';
+      try {
+        const res = await fetch('/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ number, region })
+        });
+        const payload = await res.json();
+        if (!res.ok || payload.status !== 'success') {
+          throw new Error(payload.message || 'Scan failed.');
+        }
+        window.__lastScan = payload.data;
+        document.dispatchEvent(new CustomEvent('caller:scanned', { detail: payload.data }));
+      } catch (err) {
+        scanError.textContent = err.message || 'Unable to scan number.';
+      } finally {
+        scanBtn.disabled = false;
+        scanBtn.textContent = 'SCAN';
+      }
+    }
+
+    scanBtn.addEventListener('click', scanNumber);
+    numberInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') scanNumber(); });
+  </script>
+</body>
+</html>
